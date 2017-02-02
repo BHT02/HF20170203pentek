@@ -6,9 +6,6 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -26,11 +23,8 @@ import modell.*;
 public class AdatBekeres extends JDialog {
 
   private JButton btOK = new JButton("Mehet");
-
-
   public AdatBekeres(JFrame tulajdonos, Dolgozo dolgozo, AdatBazisKezeles modell) {
     super(tulajdonos, "Adat bekérés", true);
-
     setLayout(new BorderLayout());
     JPanel pnButton=new JPanel();
     pnButton.add(btOK);
@@ -56,7 +50,7 @@ public class AdatBekeres extends JDialog {
     JLabel lbdolgozNev = new JLabel( "Dolgozó neve:             "+dolgozo.getNev());
     JLabel lbFizetes = new JLabel(   "Dolgozó fizetése:         "+dolgozo.getFizetes());
     JLabel lbMaxFizetes = new JLabel("Adható maximális fizetés: "+adhatoMax);
-    JLabel lbMinFizetes = new JLabel("Adható minimális fizetés: "+adhatoMin);
+    JLabel lbMinFizetes = new JLabel("Adható minimális fizetés: "+adhatoMin);    
     
     JSpinner sp=new JSpinner(new SpinnerNumberModel(aktFizetes, adhatoMin, adhatoMax, 50));
     pn.add(lbdolgozNev);
@@ -75,11 +69,16 @@ public class AdatBekeres extends JDialog {
           boolean siker = AdatBazisKezeles.modositFizetés(dolgozo.getEmpID(), (int)sp.getModel().getValue());
           if (siker)
             dolgozo.setFizetes((int)sp.getModel().getValue());
+          else
+            JOptionPane.showMessageDialog((Component) e.getSource(), 
+                    "Nem sikerült a módosítás!", 
+                    "Hibaüzenet", 
+                    JOptionPane.ERROR_MESSAGE);
         }else{
           JOptionPane.showMessageDialog((Component) e.getSource(), 
                     "Ugyanarra nem lehet módosítani a fizetést, ami\n korábban volt!", 
                     "Figyelmeztetés", 
-                    JOptionPane.ERROR_MESSAGE);          
+                    JOptionPane.WARNING_MESSAGE);          
         }
         dispose();
       }

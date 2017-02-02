@@ -62,7 +62,7 @@ public class FoAblak extends JFrame implements ActionListener, ListSelectionList
   private JComboBox reszlegListaBetoltes() {
     JComboBox cbReszlegLista = new JComboBox();
     ArrayList<Reszleg> reszlegek=modell.lekerdezReszleg();
-    cbReszlegLista.addItem(new Reszleg("Mindegyik", -1));
+    cbReszlegLista.addItem(new Reszleg("Összes dolgozó", -1));
     for (Reszleg reszleg : reszlegek) {
       cbReszlegLista.addItem(reszleg);
     }

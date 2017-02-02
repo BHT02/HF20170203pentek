@@ -163,10 +163,8 @@ public static void modositFizetés(int dolgozoID, int ujFizetes) { //Adott dolgo
 
  
 public static boolean modositFizetés(int dolgozoID, int ujFizetes){
-
   PreparedStatement ps = null;
   boolean ok=false;
-
   String fizetesModositoSQL =
       "UPDATE EMPLOYEES \n" +
       "SET SALARY=? \n" +
@@ -218,17 +216,28 @@ public static boolean modositFizetés(int dolgozoID, int ujFizetes){
       PreparedStatement ps;
       if(reszlegId==-1){
       ps=kapcsolat.prepareStatement(
+//              "SELECT EMP_DETAILS_VIEW.EMPLOYEE_ID as empId,\n" +
+//              "EMP_DETAILS_VIEW.FIRST_NAME || ' ' || EMP_DETAILS_VIEW.LAST_NAME as name,\n" +
+//              "EMP_DETAILS_VIEW.DEPARTMENT_ID as depId,\n" +
+//              "EMP_DETAILS_VIEW.DEPARTMENT_NAME as depName,\n" +
+//              "EMP_DETAILS_VIEW.JOB_TITLE as jobTitle,\n" +
+//              "EMP_DETAILS_VIEW.SALARY as SALARY,\n" +
+//              "JOBS.MIN_SALARY as MIN_SALARY,\n" +
+//              "JOBS.MAX_SALARY as MAX_SALARY \n" +
+//              "FROM JOBS JOBS,\n" +
+//              "EMP_DETAILS_VIEW EMP_DETAILS_VIEW\n" +
+//              "WHERE EMP_DETAILS_VIEW.JOB_ID=JOBS.JOB_ID "+
+//              "ORDER BY NAME");
               "SELECT EMP_DETAILS_VIEW.EMPLOYEE_ID as empId,\n" +
               "EMP_DETAILS_VIEW.FIRST_NAME || ' ' || EMP_DETAILS_VIEW.LAST_NAME as name,\n" +
               "EMP_DETAILS_VIEW.DEPARTMENT_ID as depId,\n" +
-              "EMP_DETAILS_VIEW.DEPARTMENT_NAME as depName,\n" +
-              "EMP_DETAILS_VIEW.JOB_TITLE as jobTitle,\n" +
+              "JOBS.JOB_TITLE as jobTitle,\n" +
               "EMP_DETAILS_VIEW.SALARY as SALARY,\n" +
               "JOBS.MIN_SALARY as MIN_SALARY,\n" +
-              "JOBS.MAX_SALARY as MAX_SALARY \n" +
+              "JOBS.MAX_SALARY as MAX_SALARY\n" +
               "FROM JOBS JOBS,\n" +
-              "EMP_DETAILS_VIEW EMP_DETAILS_VIEW\n" +
-              "WHERE EMP_DETAILS_VIEW.JOB_ID=JOBS.JOB_ID "+
+              "EMPLOYEES EMP_DETAILS_VIEW\n" +
+              "WHERE EMP_DETAILS_VIEW.JOB_ID=JOBS.JOB_ID\n" +
               "ORDER BY NAME");
       //ps.setString(1, ""+reszlegId);
       }else{
@@ -253,7 +262,7 @@ public static boolean modositFizetés(int dolgozoID, int ujFizetes){
         Dolgozo dolgozo = new Dolgozo(rs.getInt("empId"), 
                                       rs.getString("name"), 
                                       rs.getInt("depId"), 
-                                      rs.getString("depName"), 
+                                      (reszlegId==-1?"Részleg nélküli":rs.getString("depName")), 
                                       rs.getString("jobTitle"), 
                                       rs.getInt("SALARY")/*, 
                                       rs.getInt("MIN_SALARY"), 
