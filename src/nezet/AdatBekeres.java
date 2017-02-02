@@ -49,8 +49,8 @@ public class AdatBekeres extends JDialog {
     JPanel pn = new JPanel(new GridLayout(5, 1));
     JLabel lbdolgozNev = new JLabel( "Dolgozó neve:             "+dolgozo.getNev());
     JLabel lbFizetes = new JLabel(   "Dolgozó fizetése:         "+dolgozo.getFizetes());
-    JLabel lbMaxFizetes = new JLabel("Adható maximális fizrtés: "+minFizetes);
-    JLabel lbMinFizetes = new JLabel("Adható minimális fizetés: "+maxFizetes);
+    JLabel lbMaxFizetes = new JLabel("Adható maximális fizetés: "+adhatoMax);
+    JLabel lbMinFizetes = new JLabel("Adható minimális fizetés: "+adhatoMin);    
     
     JSpinner sp=new JSpinner(new SpinnerNumberModel(aktFizetes, adhatoMin, adhatoMax, 50));
     pn.add(lbdolgozNev);
