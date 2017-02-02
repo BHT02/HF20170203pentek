@@ -65,13 +65,8 @@ public class AdatBekeres extends JDialog {
       @Override
       public void mouseClicked(MouseEvent e) {
         System.out.println("Dolgozo azonositoja :"+dolgozo.getEmpID()+" uj fizu: "+(int)sp.getModel().getValue() );
-        try {
-          AdatBazisKezeles.modositFizetés(dolgozo.getEmpID(), (int)sp.getModel().getValue());
+          boolean siker = AdatBazisKezeles.modositFizetés(dolgozo.getEmpID(), (int)sp.getModel().getValue());
           dolgozo.setFizetes((int)sp.getModel().getValue());
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-       //   Logger.getLogger(AdatBekeres.class.getName()).log(Level.SEVERE, null, ex);
-        }
         JOptionPane.showMessageDialog((Component) e.getSource(), "Itt kéne adatbázisba írni", "Írás", JOptionPane.INFORMATION_MESSAGE);
         dispose();
       }
