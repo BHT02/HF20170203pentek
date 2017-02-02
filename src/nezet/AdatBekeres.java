@@ -70,9 +70,16 @@ public class AdatBekeres extends JDialog {
       @Override
       public void mouseClicked(MouseEvent e) {
         System.out.println("Dolgozo azonositoja :"+dolgozo.getEmpID()+" uj fizu: "+(int)sp.getModel().getValue() );
+        //Ha nem valtozott a fizu osszeg, akkor NE mentsuk!
+        if ((int)sp.getModel().getValue()!=aktFizetes) {
           //boolean siker = AdatBazisKezeles.modositFizetés(dolgozo.getEmpID(), (int)sp.getModel().getValue());
           dolgozo.setFizetes((int)sp.getModel().getValue());
-        JOptionPane.showMessageDialog((Component) e.getSource(), "Itt kéne adatbázisba írni", "Írás", JOptionPane.INFORMATION_MESSAGE);
+        }else{
+          JOptionPane.showMessageDialog((Component) e.getSource(), 
+                    "Ugyanarra nem lehet módosítani a fizetést, ami\n korábban volt!", 
+                    "Figyelmeztetés", 
+                    JOptionPane.ERROR_MESSAGE);          
+        }
         dispose();
       }
     });
