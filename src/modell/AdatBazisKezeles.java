@@ -163,7 +163,7 @@ public static void modositFizetés(int dolgozoID, int ujFizetes) { //Adott dolgo
 
  
 public static void modositFizetés(int dolgozoID, int ujFizetes)
-    /*throws SQLException*/ {
+    throws SQLException {
 
   PreparedStatement ps = null;
 
