@@ -23,6 +23,7 @@ import modell.*;
 public class AdatBekeres extends JDialog {
 
   private JButton btOK = new JButton("Mehet");
+
   public AdatBekeres(JFrame tulajdonos, Dolgozo dolgozo, AdatBazisKezeles modell) {
     super(tulajdonos, "Adat bekérés", true);
     setLayout(new BorderLayout());
@@ -34,6 +35,7 @@ public class AdatBekeres extends JDialog {
     setSize(300, 300);
 
     setLocationRelativeTo(tulajdonos);
+
     int minFizetes = modell.lekerdezMinFizetes(dolgozo.getMunkakor());
     int maxFizetes = modell.lekerdezMaxFizetés(dolgozo.getMunkakor());
     int aktFizetes = dolgozo.getFizetes();
@@ -63,6 +65,7 @@ public class AdatBekeres extends JDialog {
     btOK.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
+
         System.out.println("Dolgozo azonositoja :"+dolgozo.getEmpID()+" uj fizu: "+(int)sp.getModel().getValue() );
         //Ha nem valtozott a fizu osszeg, akkor NE mentsuk!
         if ((int)sp.getModel().getValue()!=aktFizetes) {

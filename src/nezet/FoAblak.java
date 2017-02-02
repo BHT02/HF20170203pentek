@@ -15,6 +15,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -75,7 +76,6 @@ public class FoAblak extends JFrame implements ActionListener, ListSelectionList
     ArrayList<Dolgozo> dolgozok = modell.lekerdezDolgozokListajaAdottReszleghez(reszlegID);
     for (Dolgozo dolgozo : dolgozok) {
       dlm.addElement(dolgozo);
-
     }
     return dlm;
   }
@@ -84,6 +84,7 @@ public class FoAblak extends JFrame implements ActionListener, ListSelectionList
   public void actionPerformed(ActionEvent e) {
     if (e.getSource() == cbReszlegLista) {
       Reszleg reszleg = (Reszleg) ((JComboBox) e.getSource()).getSelectedItem();
+
       lDolgozoLista.setModel(dolgozoListaBetoltes(reszleg.getReszlegId()));
     }
 
@@ -93,6 +94,7 @@ public class FoAblak extends JFrame implements ActionListener, ListSelectionList
   public void valueChanged(ListSelectionEvent e) {
     if (!e.getValueIsAdjusting()) {
       Dolgozo dolgozo = (Dolgozo) ((JList) e.getSource()).getSelectedValue();
+
       DefaultListModel dlm = (DefaultListModel) lDolgozoLista.getModel();
       if(dolgozo != null){
         int dolgozoInndex = dlm.indexOf(dolgozo);

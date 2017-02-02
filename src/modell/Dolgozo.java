@@ -9,6 +9,7 @@ public class Dolgozo implements Comparable<Dolgozo> {
   private String reszlegNev;
   private String munkakor;
   private int fizetes;
+
   //private int minFizetes;
   //private int maxFizetés;
 
@@ -47,6 +48,7 @@ public class Dolgozo implements Comparable<Dolgozo> {
     return fizetes;
   }
 
+
 //  public int getMinFizetes() {
 //    return minFizetes;
 //  }
@@ -65,7 +67,7 @@ public class Dolgozo implements Comparable<Dolgozo> {
     return this.nev.compareTo(masik.nev);
   }
 
+
   public void setFizetes(int ujFizetes) {
     this.fizetes=ujFizetes;
   }
-}
