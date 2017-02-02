@@ -5,6 +5,10 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
@@ -15,6 +19,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -22,7 +27,8 @@ import javax.swing.event.ListSelectionListener;
 import modell.*;
 
 
-public class FoAblak extends JFrame implements ActionListener, ListSelectionListener {
+public class FoAblak extends JFrame 
+  implements ActionListener, ListSelectionListener, MouseListener, KeyListener {
 
   private JComboBox cbReszlegLista;
   private JList lDolgozoLista = new JList(new DefaultListModel());
@@ -51,17 +57,20 @@ public class FoAblak extends JFrame implements ActionListener, ListSelectionList
     add(spDolgozoLista);
     setVisible(true);
     cbReszlegLista.addActionListener(this);
-    lDolgozoLista.addListSelectionListener(this);
+    //lDolgozoLista.addListSelectionListener(this);
+    lDolgozoLista.addMouseListener(this);
+    lDolgozoLista.addKeyListener(this);
     reszlegListaBetoltes();
     lDolgozoLista.setModel(dolgozoListaBetoltes(-1));
     lDolgozoLista.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
+    lDolgozoLista.setSelectedIndex(0);
+    lDolgozoLista.requestFocus();
   }
 
   private JComboBox reszlegListaBetoltes() {
     JComboBox cbReszlegLista = new JComboBox();
     ArrayList<Reszleg> reszlegek=modell.lekerdezReszleg();
-    cbReszlegLista.addItem(new Reszleg("Mindegyik", -1));
+    cbReszlegLista.addItem(new Reszleg("Összes dolgozó", -1));
     for (Reszleg reszleg : reszlegek) {
       cbReszlegLista.addItem(reszleg);
     }
@@ -74,6 +83,7 @@ public class FoAblak extends JFrame implements ActionListener, ListSelectionList
     ArrayList<Dolgozo> dolgozok = modell.lekerdezDolgozokListajaAdottReszleghez(reszlegID);
     for (Dolgozo dolgozo : dolgozok) {
       dlm.addElement(dolgozo);
+
     }
     return dlm;
   }
@@ -82,20 +92,85 @@ public class FoAblak extends JFrame implements ActionListener, ListSelectionList
   public void actionPerformed(ActionEvent e) {
     if (e.getSource() == cbReszlegLista) {
       Reszleg reszleg = (Reszleg) ((JComboBox) e.getSource()).getSelectedItem();
-      System.out.println(reszleg.getReszlegNev() + " " + reszleg.getReszlegId());
       lDolgozoLista.setModel(dolgozoListaBetoltes(reszleg.getReszlegId()));
+      lDolgozoLista.setSelectedIndex(0); 
+      lDolgozoLista.requestFocus();
     }
 
   }
 
   @Override
   public void valueChanged(ListSelectionEvent e) {
-    if (!e.getValueIsAdjusting()) {
+//    if (!e.getValueIsAdjusting()) {  //Ez mit csinal? 
+//      Dolgozo dolgozo = (Dolgozo) ((JList) e.getSource()).getSelectedValue();
+//      DefaultListModel dlm = (DefaultListModel) lDolgozoLista.getModel();
+//      if(dolgozo != null){
+//        int dolgozoInndex = dlm.indexOf(dolgozo);
+//        //System.out.println(dolgozo.getNev() + " " + dolgozo.getMunkakor());
+//        new AdatBekeres((JFrame) SwingUtilities.getRoot((JList) e.getSource()), dolgozo, modell);
+//        dlm.setElementAt(dolgozo, dolgozoInndex);
+//      }
+//    }
+  }
+
+  @Override
+  public void mouseClicked(MouseEvent e) {
+    //if (!e.getValueIsAdjusting()) {
+    if (e.getSource()==lDolgozoLista) {
       Dolgozo dolgozo = (Dolgozo) ((JList) e.getSource()).getSelectedValue();
+      DefaultListModel dlm = (DefaultListModel) lDolgozoLista.getModel();
       if(dolgozo != null){
-        System.out.println(dolgozo.getNev() + " " + dolgozo.getMunkakor());
-        new AdatBekeres((JFrame) SwingUtilities.getRoot((JList) e.getSource()), dolgozo);
+        int dolgozoInndex = dlm.indexOf(dolgozo);
+        //System.out.println(dolgozo.getNev() + " " + dolgozo.getMunkakor());
+        new AdatBekeres((JFrame) SwingUtilities.getRoot((JList) e.getSource()), dolgozo, modell);
+        dlm.setElementAt(dolgozo, dolgozoInndex);
       }
     }
   }
+
+  @Override
+  public void mousePressed(MouseEvent e) {
+    ;
+  }
+
+  @Override
+  public void mouseReleased(MouseEvent e) {
+    ;
+  }
+
+  @Override
+  public void mouseEntered(MouseEvent e) {
+    ;
+  }
+
+  @Override
+  public void mouseExited(MouseEvent e) {
+    ;
+  }
+
+  @Override
+  public void keyTyped(KeyEvent e) {
+    ;
+  }
+
+  @Override
+  public void keyPressed(KeyEvent e) {
+    ;
+  }
+
+  @Override
+  public void keyReleased(KeyEvent e) {
+    if (e.getSource()==lDolgozoLista)
+      if (e.getKeyCode()==KeyEvent.VK_ENTER)  {
+        Dolgozo dolgozo = (Dolgozo) ((JList) e.getSource()).getSelectedValue();
+        DefaultListModel dlm = (DefaultListModel) lDolgozoLista.getModel();
+        if(dolgozo != null){
+          int dolgozoInndex = dlm.indexOf(dolgozo);
+          //System.out.println(dolgozo.getNev() + " " + dolgozo.getMunkakor());
+          new AdatBekeres((JFrame) SwingUtilities.getRoot((JList) e.getSource()), dolgozo, modell);
+          dlm.setElementAt(dolgozo, dolgozoInndex);
+        }
+    }
+  }
+
 }

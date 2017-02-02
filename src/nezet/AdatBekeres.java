@@ -4,11 +4,10 @@ package nezet;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -23,14 +22,11 @@ import modell.*;
  *
  * @author Karoly
  */
-public class AdatBekeres extends JDialog {
+public class AdatBekeres extends JDialog implements KeyListener {
 
   private JButton btOK = new JButton("Mehet");
-
-
-  public AdatBekeres(JFrame tulajdonos, Dolgozo dolgozo) {
+  public AdatBekeres(JFrame tulajdonos, Dolgozo dolgozo, AdatBazisKezeles modell) {
     super(tulajdonos, "Adat bekérés", true);
-
     setLayout(new BorderLayout());
     JPanel pnButton=new JPanel();
     pnButton.add(btOK);
@@ -38,36 +34,76 @@ public class AdatBekeres extends JDialog {
     //setUndecorated(true);
     //setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     setSize(300, 300);
-
     setLocationRelativeTo(tulajdonos);
+    //addKeyListener(this);
+    
+    int minFizetes = modell.lekerdezMinFizetes(dolgozo.getMunkakor());
+    int maxFizetes = modell.lekerdezMaxFizetés(dolgozo.getMunkakor());
+    int aktFizetes = dolgozo.getFizetes();
+    int emeles5szazalek = Math.round(aktFizetes*1.05F);
+    int csokkentes5szazalek =  Math.round(aktFizetes*0.95F);
+    int adhatoMax = maxFizetes>emeles5szazalek?emeles5szazalek:maxFizetes;
+    int adhatoMin = minFizetes<csokkentes5szazalek?csokkentes5szazalek:minFizetes;
+    
+    System.out.println("aktfizu: "+aktFizetes+", 5% plusz: "+emeles5szazalek+
+            ", 5% minusz: "+csokkentes5szazalek+", maxfizu: "+maxFizetes+", min fizu: "+minFizetes+
+            ", adhatoMax: "+adhatoMax+", adhatoMin:. "+adhatoMin);
+    
     JPanel pn = new JPanel(new GridLayout(5, 1));
     JLabel lbdolgozNev = new JLabel( "Dolgozó neve:             "+dolgozo.getNev());
     JLabel lbFizetes = new JLabel(   "Dolgozó fizetése:         "+dolgozo.getFizetes());
-    JLabel lbMaxFizetes = new JLabel("Adható maximális fizrtés: "+dolgozo.getMaxFizetés());
-    JLabel lbMinFizetes = new JLabel("Adható minimális fizetés: "+dolgozo.getMinFizetes());
-    JSpinner sp=new JSpinner(new SpinnerNumberModel(dolgozo.getFizetes(), dolgozo.getMinFizetes(), dolgozo.getMaxFizetés(), 100));
+    JLabel lbMaxFizetes = new JLabel("Adható maximális fizetés: "+adhatoMax);
+    JLabel lbMinFizetes = new JLabel("Adható minimális fizetés: "+adhatoMin);    
+    
+    JSpinner sp=new JSpinner(new SpinnerNumberModel(aktFizetes, adhatoMin, adhatoMax, 50));
     pn.add(lbdolgozNev);
     pn.add(lbFizetes);
     pn.add(lbMaxFizetes);
     pn.add(lbMinFizetes);
     pn.add(sp);
+    //sp.addKeyListener(this);
     add(pn);
     //pack();
     btOK.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
         System.out.println("Dolgozo azonositoja :"+dolgozo.getEmpID()+" uj fizu: "+(int)sp.getModel().getValue() );
-        try {
-          AdatBazisKezeles.modositFizetés(dolgozo.getEmpID(), (int)sp.getModel().getValue());
-          dolgozo.setFizetes((int)sp.getModel().getValue());
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-       //   Logger.getLogger(AdatBekeres.class.getName()).log(Level.SEVERE, null, ex);
+        //Ha nem valtozott a fizu osszeg, akkor NE mentsuk!
+        if ((int)sp.getModel().getValue()!=aktFizetes) {
+          boolean siker = AdatBazisKezeles.modositFizetés(dolgozo.getEmpID(), (int)sp.getModel().getValue());
+          if (siker)
+            dolgozo.setFizetes((int)sp.getModel().getValue());
+          else
+            JOptionPane.showMessageDialog((Component) e.getSource(), 
+                    "Nem sikerült a módosítás!", 
+                    "Hibaüzenet", 
+                    JOptionPane.ERROR_MESSAGE);
+        }else{
+          JOptionPane.showMessageDialog((Component) e.getSource(), 
+                    "Ugyanarra nem lehet módosítani a fizetést, ami\n korábban volt!", 
+                    "Figyelmeztetés", 
+                    JOptionPane.WARNING_MESSAGE);          
         }
-        JOptionPane.showMessageDialog((Component) e.getSource(), "Itt kéne adatbázisba írni", "Írás", JOptionPane.INFORMATION_MESSAGE);
         dispose();
       }
     });
     setVisible(true);
+  }
+
+  @Override
+  public void keyTyped(KeyEvent e) {
+    ;
+  }
+
+  @Override
+  public void keyPressed(KeyEvent e) {
+//    if (e.getKeyCode()==KeyEvent.VK_eSCAPE) {
+//      dispose();
+//    }  
+  }
+
+  @Override
+  public void keyReleased(KeyEvent e) {
+    ;
   }
 }  
