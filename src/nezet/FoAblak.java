@@ -94,7 +94,7 @@ public class FoAblak extends JFrame implements ActionListener, ListSelectionList
       Dolgozo dolgozo = (Dolgozo) ((JList) e.getSource()).getSelectedValue();
       if(dolgozo != null){
         System.out.println(dolgozo.getNev() + " " + dolgozo.getMunkakor());
-        new AdatBekeres((JFrame) SwingUtilities.getRoot((JList) e.getSource()), dolgozo);
+        new AdatBekeres((JFrame) SwingUtilities.getRoot((JList) e.getSource()), dolgozo, modell);
       }
     }
   }
