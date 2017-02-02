@@ -71,3 +71,4 @@ public class Dolgozo implements Comparable<Dolgozo> {
   public void setFizetes(int ujFizetes) {
     this.fizetes=ujFizetes;
   }
+}

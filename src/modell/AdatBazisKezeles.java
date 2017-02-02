@@ -72,9 +72,10 @@ public class AdatBazisKezeles implements AdatbazisKapcsolat {
     catch(SQLException e) {
       System.out.println(e.getMessage());
     }
-    return lista;    
+    return lista;
+  }    
   
-  public int[] lekerdezMinMaxFizetes(int munkakorAzonosito) { //Adott munkakorhoz tartozo min es max fizetes
+  public int[] lekerdezMinMaxFizetes(String munkakorAzonosito) { //Adott munkakorhoz tartozo min es max fizetes
 
     int[] minmaxFizetes={0,0};
     try {
@@ -82,7 +83,7 @@ public class AdatBazisKezeles implements AdatbazisKapcsolat {
       PreparedStatement ps=kapcsolat.prepareStatement(
         "SELECT MIN_SALARY AS MINFIZETÉS, MAX_SALARY AS MAXFIZETÉS \n" +
         "FROM JOBS\n" +
-        "WHERE JOB_ID=?");
+        "WHERE JOB_TITLE=?");
       ps.setString(1, ""+munkakorAzonosito);
       ResultSet rs=ps.executeQuery();        
       rs.next();
@@ -98,7 +99,7 @@ public class AdatBazisKezeles implements AdatbazisKapcsolat {
     return minmaxFizetes;
   }
     
-  public int lekerdezMinFizetes(int munkakorAzonosito) { //Adott munkakorhoz tartozo min fizetes
+  public int lekerdezMinFizetes(String munkakorAzonosito) { //Adott munkakorhoz tartozo min fizetes
 
     int fizetes=0;
     try {
@@ -106,7 +107,7 @@ public class AdatBazisKezeles implements AdatbazisKapcsolat {
       PreparedStatement ps=kapcsolat.prepareStatement(
         "SELECT MIN_SALARY AS MINFIZETÉS \n" +
         "FROM JOBS\n" +
-        "WHERE JOB_ID=?");
+        "WHERE JOB_TITLE=?");
 
       ps.setString(1, ""+munkakorAzonosito);
       ResultSet rs=ps.executeQuery();        
