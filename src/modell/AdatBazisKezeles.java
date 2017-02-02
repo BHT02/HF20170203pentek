@@ -88,11 +88,11 @@ public class AdatBazisKezeles implements AdatbazisKapcsolat {
       rs.next();
       minmaxFizetes[0]=rs.getInt("MINFIZETÉS");
       minmaxFizetes[1]=rs.getInt("MAXFIZETÉS");
-      kapcsolatZar();
     }
     catch (SQLException e) {
       System.out.println(e.getMessage());
     }
+    kapcsolatZar();
     return minmaxFizetes;
   }
     
@@ -103,16 +103,16 @@ public class AdatBazisKezeles implements AdatbazisKapcsolat {
       PreparedStatement ps=kapcsolat.prepareStatement(
         "SELECT MIN_SALARY AS MINFIZETÉS \n" +
         "FROM JOBS\n" +
-        "WHERE JOB_ID=?");
+        "WHERE JOB_TITLE=?");
       ps.setString(1, ""+munkakorAzonosito);
       ResultSet rs=ps.executeQuery();        
       rs.next();
       fizetes=rs.getInt("MINFIZETÉS");
-      kapcsolatZar();
     }
     catch (SQLException e) {
       System.out.println(e.getMessage());
     }
+    kapcsolatZar();    
     return fizetes;
   }
 
@@ -123,16 +123,16 @@ public class AdatBazisKezeles implements AdatbazisKapcsolat {
       PreparedStatement ps=kapcsolat.prepareStatement(
         "SELECT MAX_SALARY AS MAXFIZETÉS \n" +
         "FROM JOBS\n" +
-        "WHERE JOB_ID=?");
+        "WHERE JOB_TITLE=?");
       ps.setString(1, ""+munkakorAzonosito);
       ResultSet rs=ps.executeQuery();        
       rs.next();
       fizetes=rs.getInt("MAXFIZETÉS");
-      kapcsolatZar();
     }
     catch (SQLException e) {
       System.out.println(e.getMessage());
     }
+    kapcsolatZar();
     return fizetes;
   }
 
@@ -162,10 +162,10 @@ public static void modositFizetés(int dolgozoID, int ujFizetes) { //Adott dolgo
 */
 
  
-public static void modositFizetés(int dolgozoID, int ujFizetes)
-    throws SQLException {
+public static boolean modositFizetés(int dolgozoID, int ujFizetes){
 
   PreparedStatement ps = null;
+  boolean ok=false;
 
   String fizetesModositoSQL =
       "UPDATE EMPLOYEES \n" +
@@ -180,6 +180,7 @@ public static void modositFizetés(int dolgozoID, int ujFizetes)
       ps.setDouble(2, dolgozoID);
       ps.executeUpdate();
       kapcsolat.commit();
+      ok=true;
   }
   catch (SQLException e ) {
     System.out.println(e.getMessage());
@@ -191,17 +192,21 @@ public static void modositFizetés(int dolgozoID, int ujFizetes)
       } catch(SQLException excep) {
         System.out.println(e.getMessage());
         //JDBCTutorialUtilities.printSQLException(excep);
+        }
+      }
+    } finally {
+      try {
+        if (ps != null) {
+          ps.close();
+        }
+        kapcsolat.setAutoCommit(true);
+      } catch (SQLException sQLException) {
+        sQLException.printStackTrace();
       }
     }
-  } 
-  finally {
-    if (ps != null) {
-      ps.close();
-    }
-    kapcsolat.setAutoCommit(true);
+    kapcsolatZar();
+    return ok;
   }
-  kapcsolatZar();
-} 
 
 
 /* Egyelőre ez a két lekérdezés van használataban ....  */  
@@ -250,16 +255,16 @@ public static void modositFizetés(int dolgozoID, int ujFizetes)
                                       rs.getInt("depId"), 
                                       rs.getString("depName"), 
                                       rs.getString("jobTitle"), 
-                                      rs.getInt("SALARY"), 
+                                      rs.getInt("SALARY")/*, 
                                       rs.getInt("MIN_SALARY"), 
-                                      rs.getInt("MAX_SALARY"));
+                                      rs.getInt("MAX_SALARY")*/);
         lista.add(dolgozo);
       }
-      kapcsolatZar();
     }
     catch(SQLException e) {
       System.out.println(e.getMessage());
     }
+    kapcsolatZar();
     return lista;    
   }
   
@@ -279,11 +284,11 @@ public static void modositFizetés(int dolgozoID, int ujFizetes)
         Reszleg reszleg = new Reszleg(rs.getString("DEPARTMENT_NAME"), rs.getInt("DEPARTMENT_ID"));
         lista.add(reszleg);
       }
-      kapcsolatZar();
     }
     catch (SQLException e) {
       e.printStackTrace();
     }
+    kapcsolatZar();
     return lista;
   }
   

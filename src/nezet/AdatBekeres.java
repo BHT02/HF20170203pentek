@@ -44,9 +44,10 @@ public class AdatBekeres extends JDialog {
     int maxFizetes = modell.lekerdezMaxFizetés(dolgozo.getMunkakor());
     int aktFizetes = dolgozo.getFizetes();
     int emeles5szazalek = Math.round(aktFizetes*1.05F);
-    int csokkentes5szazalek = Math.round(aktFizetes*0.95F);
+    int csokkentes5szazalek =  Math.round(aktFizetes*0.95F);
     int adhatoMax = maxFizetes>emeles5szazalek?emeles5szazalek:maxFizetes;
     int adhatoMin = minFizetes<csokkentes5szazalek?csokkentes5szazalek:minFizetes;
+    
     System.out.println("aktfizu: "+aktFizetes+", 5% plusz: "+emeles5szazalek+
             ", 5% minusz: "+csokkentes5szazalek+", maxfizu: "+maxFizetes+", min fizu: "+minFizetes+
             ", adhatoMax: "+adhatoMax+", adhatoMin:. "+adhatoMin);
@@ -54,8 +55,8 @@ public class AdatBekeres extends JDialog {
     JPanel pn = new JPanel(new GridLayout(5, 1));
     JLabel lbdolgozNev = new JLabel( "Dolgozó neve:             "+dolgozo.getNev());
     JLabel lbFizetes = new JLabel(   "Dolgozó fizetése:         "+dolgozo.getFizetes());
-    JLabel lbMaxFizetes = new JLabel("Adható maximális fizetés: "+maxFizetes);
-    JLabel lbMinFizetes = new JLabel("Adható minimális fizetés: "+minFizetes);
+    JLabel lbMaxFizetes = new JLabel("Adható maximális fizetés: "+adhatoMax);
+    JLabel lbMinFizetes = new JLabel("Adható minimális fizetés: "+adhatoMin);
     
     JSpinner sp=new JSpinner(new SpinnerNumberModel(aktFizetes, adhatoMin, adhatoMax, 50));
     pn.add(lbdolgozNev);
@@ -72,10 +73,14 @@ public class AdatBekeres extends JDialog {
         //Ha nem valtozott a fizu osszeg, akkor NE mentsuk!
         if ((int)sp.getModel().getValue()!=aktFizetes) {
           boolean siker = AdatBazisKezeles.modositFizetés(dolgozo.getEmpID(), (int)sp.getModel().getValue());
-          dolgozo.setFizetes((int)sp.getModel().getValue());
+          if (siker)
+            dolgozo.setFizetes((int)sp.getModel().getValue());
+        }else{
+          JOptionPane.showMessageDialog((Component) e.getSource(), 
+                    "Ugyanarra nem lehet módosítani a fizetést, ami\n korábban volt!", 
+                    "Figyelmeztetés", 
+                    JOptionPane.ERROR_MESSAGE);          
         }
-        else
-          JOptionPane.showMessageDialog((Component) e.getSource(), "Ugyanarra nem lehet módosítani a fizetést, ami\n korábban volt!", "Figyelmeztetés", JOptionPane.ERROR_MESSAGE);
         dispose();
       }
     });
