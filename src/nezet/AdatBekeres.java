@@ -44,15 +44,21 @@ public class AdatBekeres extends JDialog {
     int maxFizetes = modell.lekerdezMaxFizetés(dolgozo.getMunkakor());
     int aktFizetes = dolgozo.getFizetes();
     int emeles5szazalek = Math.round(aktFizetes*1.05F);
+    int csokkentes5szazalek =  Math.round(aktFizetes*0.95F);
     int adhatoMax = maxFizetes>emeles5szazalek?emeles5szazalek:maxFizetes;
-
+    int adhatoMin = minFizetes<csokkentes5szazalek?csokkentes5szazalek:minFizetes;
+    
+    System.out.println("aktfizu: "+aktFizetes+", 5% plusz: "+emeles5szazalek+
+            ", 5% minusz: "+csokkentes5szazalek+", maxfizu: "+maxFizetes+", min fizu: "+minFizetes+
+            ", adhatoMax: "+adhatoMax+", adhatoMin:. "+adhatoMin);
+    
     JPanel pn = new JPanel(new GridLayout(5, 1));
     JLabel lbdolgozNev = new JLabel( "Dolgozó neve:             "+dolgozo.getNev());
     JLabel lbFizetes = new JLabel(   "Dolgozó fizetése:         "+dolgozo.getFizetes());
     JLabel lbMaxFizetes = new JLabel("Adható maximális fizrtés: "+minFizetes);
     JLabel lbMinFizetes = new JLabel("Adható minimális fizetés: "+maxFizetes);
     
-    JSpinner sp=new JSpinner(new SpinnerNumberModel(aktFizetes+50, aktFizetes+50, adhatoMax, 50));
+    JSpinner sp=new JSpinner(new SpinnerNumberModel(aktFizetes, adhatoMin, adhatoMax, 50));
     pn.add(lbdolgozNev);
     pn.add(lbFizetes);
     pn.add(lbMaxFizetes);
@@ -64,7 +70,7 @@ public class AdatBekeres extends JDialog {
       @Override
       public void mouseClicked(MouseEvent e) {
         System.out.println("Dolgozo azonositoja :"+dolgozo.getEmpID()+" uj fizu: "+(int)sp.getModel().getValue() );
-          boolean siker = AdatBazisKezeles.modositFizetés(dolgozo.getEmpID(), (int)sp.getModel().getValue());
+          //boolean siker = AdatBazisKezeles.modositFizetés(dolgozo.getEmpID(), (int)sp.getModel().getValue());
           dolgozo.setFizetes((int)sp.getModel().getValue());
         JOptionPane.showMessageDialog((Component) e.getSource(), "Itt kéne adatbázisba írni", "Írás", JOptionPane.INFORMATION_MESSAGE);
         dispose();
