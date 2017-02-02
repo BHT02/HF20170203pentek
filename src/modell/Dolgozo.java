@@ -57,7 +57,7 @@ public class Dolgozo implements Comparable<Dolgozo> {
 
   @Override
   public String toString() {
-    return nev;
+    return "<html>"+nev+" Fizetés: "+fizetes+"</html>";
   }
 
   @Override
