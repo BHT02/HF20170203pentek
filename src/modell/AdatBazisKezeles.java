@@ -1,6 +1,5 @@
 package modell;
 
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,8 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-
-
 
 public class AdatBazisKezeles implements AdatbazisKapcsolat {
   private static Connection kapcsolat;
@@ -76,11 +73,9 @@ public class AdatBazisKezeles implements AdatbazisKapcsolat {
       System.out.println(e.getMessage());
     }
     return lista;    
-  }
-  
-  
   
   public int[] lekerdezMinMaxFizetes(int munkakorAzonosito) { //Adott munkakorhoz tartozo min es max fizetes
+
     int[] minmaxFizetes={0,0};
     try {
       kapcsolatNyit();
@@ -93,15 +88,18 @@ public class AdatBazisKezeles implements AdatbazisKapcsolat {
       rs.next();
       minmaxFizetes[0]=rs.getInt("MINFIZETÉS");
       minmaxFizetes[1]=rs.getInt("MAXFIZETÉS");
-      kapcsolatZar();
+
     }
     catch (SQLException e) {
       System.out.println(e.getMessage());
     }
+
+    kapcsolatZar();
     return minmaxFizetes;
   }
     
   public int lekerdezMinFizetes(int munkakorAzonosito) { //Adott munkakorhoz tartozo min fizetes
+
     int fizetes=0;
     try {
       kapcsolatNyit();
@@ -109,37 +107,118 @@ public class AdatBazisKezeles implements AdatbazisKapcsolat {
         "SELECT MIN_SALARY AS MINFIZETÉS \n" +
         "FROM JOBS\n" +
         "WHERE JOB_ID=?");
+
       ps.setString(1, ""+munkakorAzonosito);
       ResultSet rs=ps.executeQuery();        
       rs.next();
       fizetes=rs.getInt("MINFIZETÉS");
-      kapcsolatZar();
     }
     catch (SQLException e) {
       System.out.println(e.getMessage());
     }
+
+    kapcsolatZar();    
     return fizetes;
   }
 
-  public int lekerdezMaxFizetés(int munkakorAzonosito) { //Adott munkakorhoz tartozo max fizetes
+  public int lekerdezMaxFizetés(String munkakorAzonosito) { //Adott munkakorhoz tartozo max fizetes
+
     int fizetes=0;
     try {
       kapcsolatNyit();
       PreparedStatement ps=kapcsolat.prepareStatement(
         "SELECT MAX_SALARY AS MAXFIZETÉS \n" +
         "FROM JOBS\n" +
-        "WHERE JOB_ID=?");
+
+        "WHERE JOB_TITLE=?");
       ps.setString(1, ""+munkakorAzonosito);
       ResultSet rs=ps.executeQuery();        
       rs.next();
       fizetes=rs.getInt("MAXFIZETÉS");
+
+    }
+    catch (SQLException e) {
+      System.out.println(e.getMessage());
+    }
+    kapcsolatZar();
+    return fizetes;
+  }
+
+/*  
+public static void modositFizetés(int dolgozoID, int ujFizetes) { //Adott dolgozo fizetesenek modositasa adott osszegre
+    try {
+//      kapcsolatNyit();
+//      PreparedStatement ps=kapcsolat.prepareStatement(
+//        "UPDATE EMPLOYEES \n" +
+//        "SET SALARY=?\n" +
+//        "WHERE EMPLOYEE_ID=?");
+//      ps.setInt(1, dolgozoID);
+//      ps.setInt(2, ujFizetes);
+//      ps.executeUpdate(); 
+//Teszthez
+      Statement s = kapcsolat.createStatement();
+      s.executeUpdate(
+              "update employees \n" +
+              "set salary=9000\n" +
+              "where employee_id=110");
+
       kapcsolatZar();
     }
     catch (SQLException e) {
       System.out.println(e.getMessage());
     }
-    return fizetes;
+
   }
+*/
+
+ 
+public static boolean modositFizetés(int dolgozoID, int ujFizetes){
+  PreparedStatement ps = null;
+  boolean ok=false;
+  String fizetesModositoSQL =
+      "UPDATE EMPLOYEES \n" +
+      "SET SALARY=? \n" +
+      "WHERE EMPLOYEE_ID=? ";
+  
+  kapcsolatNyit();
+  try {
+      kapcsolat.setAutoCommit(false);
+      ps = kapcsolat.prepareStatement(fizetesModositoSQL);
+      ps.setString(1, ""+ujFizetes);
+      ps.setDouble(2, dolgozoID);
+      ps.executeUpdate();
+      kapcsolat.commit();
+      ok=true;
+  }
+  catch (SQLException e ) {
+    System.out.println(e.getMessage());
+    //JDBCTutorialUtilities.printSQLException(e);
+    if (kapcsolat != null) {
+      try {
+        System.err.print("Transaction is being rolled back");
+        kapcsolat.rollback();
+      } catch(SQLException excep) {
+        System.out.println(e.getMessage());
+        //JDBCTutorialUtilities.printSQLException(excep);
+        }
+      }
+    } finally {
+      try {
+        if (ps != null) {
+          ps.close();
+        }
+        kapcsolat.setAutoCommit(true);
+      } catch (SQLException sQLException) {
+        sQLException.printStackTrace();
+      }
+    }
+    kapcsolatZar();
+    return ok;
+  }
+
+
+
+
 
 /* Egyelőre ez a két lekérdezés van használataban ....  */  
   
@@ -187,16 +266,18 @@ public class AdatBazisKezeles implements AdatbazisKapcsolat {
                                       rs.getInt("depId"), 
                                       rs.getString("depName"), 
                                       rs.getString("jobTitle"), 
-                                      rs.getInt("SALARY"), 
+
+                                      rs.getInt("SALARY")/*, 
                                       rs.getInt("MIN_SALARY"), 
-                                      rs.getInt("MAX_SALARY"));
+                                      rs.getInt("MAX_SALARY")*/);
         lista.add(dolgozo);
       }
-      kapcsolatZar();
     }
     catch(SQLException e) {
       System.out.println(e.getMessage());
     }
+
+    kapcsolatZar();
     return lista;    
   }
   
@@ -216,11 +297,12 @@ public class AdatBazisKezeles implements AdatbazisKapcsolat {
         Reszleg reszleg = new Reszleg(rs.getString("DEPARTMENT_NAME"), rs.getInt("DEPARTMENT_ID"));
         lista.add(reszleg);
       }
-      kapcsolatZar();
     }
     catch (SQLException e) {
       e.printStackTrace();
     }
+
+    kapcsolatZar();
     return lista;
   }
   

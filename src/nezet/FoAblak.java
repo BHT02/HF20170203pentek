@@ -15,6 +15,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+
+import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -82,7 +84,7 @@ public class FoAblak extends JFrame implements ActionListener, ListSelectionList
   public void actionPerformed(ActionEvent e) {
     if (e.getSource() == cbReszlegLista) {
       Reszleg reszleg = (Reszleg) ((JComboBox) e.getSource()).getSelectedItem();
-      System.out.println(reszleg.getReszlegNev() + " " + reszleg.getReszlegId());
+
       lDolgozoLista.setModel(dolgozoListaBetoltes(reszleg.getReszlegId()));
     }
 
@@ -92,10 +94,15 @@ public class FoAblak extends JFrame implements ActionListener, ListSelectionList
   public void valueChanged(ListSelectionEvent e) {
     if (!e.getValueIsAdjusting()) {
       Dolgozo dolgozo = (Dolgozo) ((JList) e.getSource()).getSelectedValue();
+
+      DefaultListModel dlm = (DefaultListModel) lDolgozoLista.getModel();
       if(dolgozo != null){
-        System.out.println(dolgozo.getNev() + " " + dolgozo.getMunkakor());
-        new AdatBekeres((JFrame) SwingUtilities.getRoot((JList) e.getSource()), dolgozo);
+        int dolgozoInndex = dlm.indexOf(dolgozo);
+        //System.out.println(dolgozo.getNev() + " " + dolgozo.getMunkakor());
+        new AdatBekeres((JFrame) SwingUtilities.getRoot((JList) e.getSource()), dolgozo, modell);
+        dlm.setElementAt(dolgozo, dolgozoInndex);
       }
     }
   }
+
 }
