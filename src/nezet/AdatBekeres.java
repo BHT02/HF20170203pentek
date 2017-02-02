@@ -6,9 +6,6 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -26,11 +23,8 @@ import modell.*;
 public class AdatBekeres extends JDialog {
 
   private JButton btOK = new JButton("Mehet");
-
-
   public AdatBekeres(JFrame tulajdonos, Dolgozo dolgozo, AdatBazisKezeles modell) {
     super(tulajdonos, "Adat bekérés", true);
-
     setLayout(new BorderLayout());
     JPanel pnButton=new JPanel();
     pnButton.add(btOK);

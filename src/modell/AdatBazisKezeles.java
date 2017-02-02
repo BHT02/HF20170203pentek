@@ -163,10 +163,8 @@ public static void modositFizetés(int dolgozoID, int ujFizetes) { //Adott dolgo
 
  
 public static boolean modositFizetés(int dolgozoID, int ujFizetes){
-
   PreparedStatement ps = null;
   boolean ok=false;
-
   String fizetesModositoSQL =
       "UPDATE EMPLOYEES \n" +
       "SET SALARY=? \n" +
