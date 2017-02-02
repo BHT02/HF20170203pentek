@@ -82,7 +82,6 @@ public class FoAblak extends JFrame implements ActionListener, ListSelectionList
   public void actionPerformed(ActionEvent e) {
     if (e.getSource() == cbReszlegLista) {
       Reszleg reszleg = (Reszleg) ((JComboBox) e.getSource()).getSelectedItem();
-      System.out.println(reszleg.getReszlegNev() + " " + reszleg.getReszlegId());
       lDolgozoLista.setModel(dolgozoListaBetoltes(reszleg.getReszlegId()));
     }
 
@@ -92,9 +91,11 @@ public class FoAblak extends JFrame implements ActionListener, ListSelectionList
   public void valueChanged(ListSelectionEvent e) {
     if (!e.getValueIsAdjusting()) {
       Dolgozo dolgozo = (Dolgozo) ((JList) e.getSource()).getSelectedValue();
+      ;
       if(dolgozo != null){
         System.out.println(dolgozo.getNev() + " " + dolgozo.getMunkakor());
         new AdatBekeres((JFrame) SwingUtilities.getRoot((JList) e.getSource()), dolgozo, modell);
+        
       }
     }
   }

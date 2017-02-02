@@ -113,7 +113,6 @@ public class AdatBazisKezeles implements AdatbazisKapcsolat {
       System.out.println(e.getMessage());
     }
     kapcsolatZar();    
-    System.out.println(fizetes);
     return fizetes;
   }
 
@@ -134,7 +133,6 @@ public class AdatBazisKezeles implements AdatbazisKapcsolat {
       System.out.println(e.getMessage());
     }
     kapcsolatZar();
-    System.out.println(fizetes);
     return fizetes;
   }
 

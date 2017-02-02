@@ -45,7 +45,6 @@ public class AdatBekeres extends JDialog {
     int aktFizetes = dolgozo.getFizetes();
     int emeles5szazalek = Math.round(aktFizetes*1.05F);
     int adhatoMax = maxFizetes>emeles5szazalek?emeles5szazalek:maxFizetes;
-    System.out.println(aktFizetes+" "+emeles5szazalek+" "+maxFizetes);
 
     JPanel pn = new JPanel(new GridLayout(5, 1));
     JLabel lbdolgozNev = new JLabel( "Dolgozó neve:             "+dolgozo.getNev());
