@@ -164,10 +164,10 @@ public static void modositFizetés(int dolgozoID, int ujFizetes) { //Adott dolgo
 */
 
  
-public static void modositFizetés(int dolgozoID, int ujFizetes)
-    throws SQLException {
+public static boolean modositFizetés(int dolgozoID, int ujFizetes){
 
   PreparedStatement ps = null;
+  boolean ok=false;
 
   String fizetesModositoSQL =
       "UPDATE EMPLOYEES \n" +
@@ -182,6 +182,7 @@ public static void modositFizetés(int dolgozoID, int ujFizetes)
       ps.setDouble(2, dolgozoID);
       ps.executeUpdate();
       kapcsolat.commit();
+      ok=true;
   }
   catch (SQLException e ) {
     System.out.println(e.getMessage());
@@ -193,17 +194,21 @@ public static void modositFizetés(int dolgozoID, int ujFizetes)
       } catch(SQLException excep) {
         System.out.println(e.getMessage());
         //JDBCTutorialUtilities.printSQLException(excep);
+        }
+      }
+    } finally {
+      try {
+        if (ps != null) {
+          ps.close();
+        }
+        kapcsolat.setAutoCommit(true);
+      } catch (SQLException sQLException) {
+        sQLException.printStackTrace();
       }
     }
-  } 
-  finally {
-    if (ps != null) {
-      ps.close();
-    }
-    kapcsolat.setAutoCommit(true);
+    kapcsolatZar();
+    return ok;
   }
-  kapcsolatZar();
-} 
 
 
 /* Egyelőre ez a két lekérdezés van használataban ....  */  
