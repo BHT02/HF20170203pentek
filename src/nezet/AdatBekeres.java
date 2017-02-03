@@ -4,6 +4,7 @@ package nezet;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -56,6 +57,13 @@ public class AdatBekeres extends JDialog implements KeyListener {
     pnCimkek.add(new JLabel("Adható minimális fizetés:")); pnCimkek.add(lbMinFizetes);
            
     JSpinner sp=new JSpinner(new SpinnerNumberModel(aktFizetes, adhatoMin, adhatoMax, 50));
+    sp.addKeyListener(new KeyAdapter() {
+      @Override      
+      public void keyTyped(KeyEvent e) {
+        if (e.getKeyCode()==KeyEvent.VK_ESCAPE) 
+          dispose();
+      }      
+    });
     JPanel pnSpinner=new JPanel(new BorderLayout());
     pnSpinner.add(sp, BorderLayout.PAGE_START);
     
