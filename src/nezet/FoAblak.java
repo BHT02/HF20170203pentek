@@ -15,10 +15,9 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import modell.*;
@@ -31,9 +30,11 @@ public class FoAblak extends JFrame implements ActionListener, ListSelectionList
   private JTextField tfDolgozoKeres = new JTextField("Keresendő dolgozó", 12);
   private JScrollPane spDolgozoLista = new JScrollPane(lDolgozoLista);
   private AdatBazisKezeles modell;
+  DefaultListModel dlm = new DefaultListModel();
 
   public FoAblak(AdatBazisKezeles modell) {
     this.modell=modell;
+    System.out.println("eddig jó");
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     setTitle("HR Fizetés emelés");
     setSize(700, 500);
@@ -48,6 +49,13 @@ public class FoAblak extends JFrame implements ActionListener, ListSelectionList
     pn.add(cbReszlegLista);
     pn.add(lbKitolto);
     pn.add(new JLabel("Dolgozó keresés: "));
+    tfDolgozoKeres.setText("");
+    tfDolgozoKeres.getDocument().addDocumentListener(new MyDocumentListener());
+    tfDolgozoKeres.getDocument().putProperty("name", "Text Area");
+    // ide jön majd valami
+    
+    
+    
     pn.add(tfDolgozoKeres);
     add(pn, BorderLayout.PAGE_START);
     add(spDolgozoLista);
@@ -72,10 +80,11 @@ public class FoAblak extends JFrame implements ActionListener, ListSelectionList
 
   private DefaultListModel dolgozoListaBetoltes(int reszlegID) {
 
-    DefaultListModel dlm = new DefaultListModel();
+    dlm = new DefaultListModel();
     ArrayList<Dolgozo> dolgozok = modell.lekerdezDolgozokListajaAdottReszleghez(reszlegID);
     for (Dolgozo dolgozo : dolgozok) {
       dlm.addElement(dolgozo);
+
     }
     return dlm;
   }
@@ -84,7 +93,6 @@ public class FoAblak extends JFrame implements ActionListener, ListSelectionList
   public void actionPerformed(ActionEvent e) {
     if (e.getSource() == cbReszlegLista) {
       Reszleg reszleg = (Reszleg) ((JComboBox) e.getSource()).getSelectedItem();
-
       lDolgozoLista.setModel(dolgozoListaBetoltes(reszleg.getReszlegId()));
     }
 
@@ -94,15 +102,48 @@ public class FoAblak extends JFrame implements ActionListener, ListSelectionList
   public void valueChanged(ListSelectionEvent e) {
     if (!e.getValueIsAdjusting()) {
       Dolgozo dolgozo = (Dolgozo) ((JList) e.getSource()).getSelectedValue();
-
-      DefaultListModel dlm = (DefaultListModel) lDolgozoLista.getModel();
       if(dolgozo != null){
         int dolgozoInndex = dlm.indexOf(dolgozo);
-        //System.out.println(dolgozo.getNev() + " " + dolgozo.getMunkakor());
-        new AdatBekeres((JFrame) SwingUtilities.getRoot((JList) e.getSource()), dolgozo, modell);
+        new AdatBekeres(this, dolgozo, modell);
         dlm.setElementAt(dolgozo, dolgozoInndex);
       }
     }
   }
 
+      class MyDocumentListener implements DocumentListener {
+
+    final String newline = "\n";
+
+    public void insertUpdate(DocumentEvent e) {
+      updateLog(e);
+    }
+
+    public void removeUpdate(DocumentEvent e) {
+      updateLog(e);
+    }
+
+    public void changedUpdate(DocumentEvent e) {
+      //Plain text components don't fire these events.
+    }
+
+    public void updateLog(DocumentEvent e) {
+      if (tfDolgozoKeres.getText().length() > 0) {
+        String keres = tfDolgozoKeres.getText().toLowerCase();
+        DefaultListModel dlmSzukitett = new DefaultListModel();
+        for (int i = 0; i < dlm.getSize(); i++) {
+          if (dlm.getElementAt(i).toString().toLowerCase().contains(keres)) {
+            dlmSzukitett.addElement(dlm.getElementAt(i));
+          }
+        }
+        if (dlmSzukitett.size() == 0) {
+          dlmSzukitett.addElement("Nincs találat");
+        }
+        lDolgozoLista.setModel(dlmSzukitett);
+        //System.out.println(dlm);
+      } else {
+        lDolgozoLista.setModel(dlm);
+      }
+    }
+  }
+      
 }
