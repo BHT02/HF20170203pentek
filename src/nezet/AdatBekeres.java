@@ -4,6 +4,8 @@ package nezet;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JButton;
@@ -14,26 +16,27 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import modell.*;
 
-/**
- *
- * @author Karoly
- */
-public class AdatBekeres extends JDialog {
-
+public class AdatBekeres extends JDialog implements KeyListener {
   private JButton btOK = new JButton("Mehet");
+  
   public AdatBekeres(JFrame tulajdonos, Dolgozo dolgozo, AdatBazisKezeles modell) {
     super(tulajdonos, "Adat bekérés", true);
     setLayout(new BorderLayout());
     JPanel pnButton=new JPanel();
     pnButton.add(btOK);
-    add(pnButton, BorderLayout.PAGE_END);
+    add(pnButton, BorderLayout.PAGE_END);    
+    add(new JPanel(), BorderLayout.PAGE_START);
+    add(new JPanel(), BorderLayout.LINE_START);
+    add(new JPanel(), BorderLayout.LINE_END);    
     //setUndecorated(true);
     //setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-    setSize(300, 300);
-
+    setSize(400, 200);
     setLocationRelativeTo(tulajdonos);
+    //addKeyListener(this);
+    
     int minFizetes = modell.lekerdezMinFizetes(dolgozo.getMunkakor());
     int maxFizetes = modell.lekerdezMaxFizetés(dolgozo.getMunkakor());
     int aktFizetes = dolgozo.getFizetes();
@@ -42,28 +45,34 @@ public class AdatBekeres extends JDialog {
     int adhatoMax = maxFizetes>emeles5szazalek?emeles5szazalek:maxFizetes;
     int adhatoMin = minFizetes<csokkentes5szazalek?csokkentes5szazalek:minFizetes;
     
-    System.out.println("aktfizu: "+aktFizetes+", 5% plusz: "+emeles5szazalek+
-            ", 5% minusz: "+csokkentes5szazalek+", maxfizu: "+maxFizetes+", min fizu: "+minFizetes+
-            ", adhatoMax: "+adhatoMax+", adhatoMin:. "+adhatoMin);
+//    System.out.println("aktfizu: "+aktFizetes+", 5% plusz: "+emeles5szazalek+
+//            ", 5% minusz: "+csokkentes5szazalek+", maxfizu: "+maxFizetes+", min fizu: "+minFizetes+
+//            ", adhatoMax: "+adhatoMax+", adhatoMin:. "+adhatoMin);
     
-    JPanel pn = new JPanel(new GridLayout(5, 1));
-    JLabel lbdolgozNev = new JLabel( "Dolgozó neve:             "+dolgozo.getNev());
-    JLabel lbFizetes = new JLabel(   "Dolgozó fizetése:         "+dolgozo.getFizetes());
-    JLabel lbMaxFizetes = new JLabel("Adható maximális fizetés: "+adhatoMax);
-    JLabel lbMinFizetes = new JLabel("Adható minimális fizetés: "+adhatoMin);    
-    
+    JLabel lbdolgozNev = new JLabel(dolgozo.getNev());
+    JLabel lbFizetes = new JLabel(""+dolgozo.getFizetes());
+    JLabel lbMaxFizetes = new JLabel(""+adhatoMax);
+    JLabel lbMinFizetes = new JLabel(""+adhatoMin);     
+    JPanel pnCimkek=new JPanel(new GridLayout(4,2));
+    pnCimkek.add(new JLabel("Dolgozó neve:"));             pnCimkek.add(lbdolgozNev);
+    pnCimkek.add(new JLabel("Dolgozó fizetése:"));         pnCimkek.add(lbFizetes);
+    pnCimkek.add(new JLabel("Adható maximális fizetés:")); pnCimkek.add(lbMaxFizetes);
+    pnCimkek.add(new JLabel("Adható minimális fizetés:")); pnCimkek.add(lbMinFizetes);
+           
     JSpinner sp=new JSpinner(new SpinnerNumberModel(aktFizetes, adhatoMin, adhatoMax, 50));
-    pn.add(lbdolgozNev);
-    pn.add(lbFizetes);
-    pn.add(lbMaxFizetes);
-    pn.add(lbMinFizetes);
-    pn.add(sp);
-    add(pn);
-    //pack();
+    JPanel pnSpinner=new JPanel(new BorderLayout());
+    pnSpinner.add(sp, BorderLayout.PAGE_START);
+    
+    JPanel pn=new JPanel (new BorderLayout());
+    pn.add(pnCimkek, BorderLayout.CENTER);
+    pn.add(pnSpinner, BorderLayout.PAGE_END);
+    //sp.addKeyListener(this);
+    add(pn, BorderLayout.CENTER);
+    //pack(); 
     btOK.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-        System.out.println("Dolgozo azonositoja :"+dolgozo.getEmpID()+" uj fizu: "+(int)sp.getModel().getValue() );
+        //System.out.println("Dolgozo azonositoja :"+dolgozo.getEmpID()+" uj fizu: "+(int)sp.getModel().getValue() );
         //Ha nem valtozott a fizu osszeg, akkor NE mentsuk!
         if ((int)sp.getModel().getValue()!=aktFizetes) {
           boolean siker = AdatBazisKezeles.modositFizetés(dolgozo.getEmpID(), (int)sp.getModel().getValue());
@@ -74,7 +83,8 @@ public class AdatBekeres extends JDialog {
                     "Nem sikerült a módosítás!", 
                     "Hibaüzenet", 
                     JOptionPane.ERROR_MESSAGE);
-        }else{
+        }
+        else {
           JOptionPane.showMessageDialog((Component) e.getSource(), 
                     "Ugyanarra nem lehet módosítani a fizetést, ami\n korábban volt!", 
                     "Figyelmeztetés", 
@@ -84,5 +94,22 @@ public class AdatBekeres extends JDialog {
       }
     });
     setVisible(true);
+  }
+
+  @Override
+  public void keyTyped(KeyEvent e) {
+    ;
+  }
+
+  @Override
+  public void keyPressed(KeyEvent e) {
+//    if (e.getKeyCode()==KeyEvent.VK_eSCAPE) {
+//      dispose();
+//    }  
+  }
+
+  @Override
+  public void keyReleased(KeyEvent e) {
+    ;
   }
 }  

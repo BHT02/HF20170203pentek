@@ -57,7 +57,12 @@ public class Dolgozo implements Comparable<Dolgozo> {
 
   @Override
   public String toString() {
-    return "<html>"+nev+" Fizetés: "+fizetes+"</html>";
+    //return "<html>"+nev+"<TAB IDENT=30> ($"+fizetes+")</html>";
+    String szokoz="  ";
+//    for (int i = 0; i < 30-(nev.length()+((Integer)fizetes).toString().length()); i++) {
+//      szokoz+=" ";
+//    }
+    return nev+szokoz+"($"+fizetes+")";
   }
 
   @Override

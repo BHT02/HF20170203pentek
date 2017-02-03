@@ -185,7 +185,7 @@ public static boolean modositFizetés(int dolgozoID, int ujFizetes){
     //JDBCTutorialUtilities.printSQLException(e);
     if (kapcsolat != null) {
       try {
-        System.err.print("Transaction is being rolled back");
+        System.err.print("A tranzakció visszagörgetésre kerül!");
         kapcsolat.rollback();
       } catch(SQLException excep) {
         System.out.println(e.getMessage());
@@ -207,7 +207,7 @@ public static boolean modositFizetés(int dolgozoID, int ujFizetes){
   }
 
 
-/* Egyelőre ez a két lekérdezés van használataban ....  */  
+  
   
   public ArrayList<Dolgozo> lekerdezDolgozokListajaAdottReszleghez(int reszlegId) { //Adott reszleg dolgozoi
     ArrayList<Dolgozo> lista=new ArrayList<>();
@@ -300,7 +300,5 @@ public static boolean modositFizetés(int dolgozoID, int ujFizetes){
     kapcsolatZar();
     return lista;
   }
-  
-  //protected abstract DefaultListModel faModell();
   
 }
