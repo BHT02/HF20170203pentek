@@ -45,10 +45,6 @@ public class AdatBekeres extends JDialog implements KeyListener {
     int adhatoMax = maxFizetes>emeles5szazalek?emeles5szazalek:maxFizetes;
     int adhatoMin = minFizetes<csokkentes5szazalek?csokkentes5szazalek:minFizetes;
     
-//    System.out.println("aktfizu: "+aktFizetes+", 5% plusz: "+emeles5szazalek+
-//            ", 5% minusz: "+csokkentes5szazalek+", maxfizu: "+maxFizetes+", min fizu: "+minFizetes+
-//            ", adhatoMax: "+adhatoMax+", adhatoMin:. "+adhatoMin);
-    
     JLabel lbdolgozNev = new JLabel(dolgozo.getNev());
     JLabel lbFizetes = new JLabel(""+dolgozo.getFizetes());
     JLabel lbMaxFizetes = new JLabel(""+adhatoMax);
@@ -72,12 +68,13 @@ public class AdatBekeres extends JDialog implements KeyListener {
     btOK.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-        //System.out.println("Dolgozo azonositoja :"+dolgozo.getEmpID()+" uj fizu: "+(int)sp.getModel().getValue() );
         //Ha nem valtozott a fizu osszeg, akkor NE mentsuk!
         if ((int)sp.getModel().getValue()!=aktFizetes) {
           boolean siker = AdatBazisKezeles.modositFizetés(dolgozo.getEmpID(), (int)sp.getModel().getValue());
-          if (siker)
+          if (siker) {
             dolgozo.setFizetes((int)sp.getModel().getValue());
+            dispose();
+          }  
           else
             JOptionPane.showMessageDialog((Component) e.getSource(), 
                     "Nem sikerült a módosítás!", 
@@ -90,9 +87,10 @@ public class AdatBekeres extends JDialog implements KeyListener {
                     "Figyelmeztetés", 
                     JOptionPane.WARNING_MESSAGE);          
         }
-        dispose();
+       // dispose();
       }
     });
+    
     setVisible(true);
   }
 
